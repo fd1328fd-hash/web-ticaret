@@ -1,4 +1,4 @@
-// app/page.tsx
+// app/ara/page.tsx
 import Navbar from "@/components/layout/Navbar";
 import Sidebar from "@/components/layout/Sidebar";
 import Footer from "@/components/layout/Footer";
@@ -7,13 +7,29 @@ import { prisma } from "@/lib/prisma";
 
 export const dynamic = "force-dynamic";
 
-export default async function Home() {
-  const ilanlar = await prisma.listing.findMany({
-    where: { status: "ACTIVE" },
-    orderBy: { createdAt: "desc" },
-    take: 20,
-    include: { category: true },
-  });
+export default async function AraSayfasi({
+  searchParams,
+}: {
+  searchParams: Promise<{ q?: string }>;
+}) {
+  const { q } = await searchParams;
+  const arama = (q || "").trim();
+
+  const ilanlar = arama
+    ? await prisma.listing.findMany({
+        where: {
+          status: "ACTIVE",
+          OR: [
+            { title: { contains: arama } },
+            { description: { contains: arama } },
+            { city: { contains: arama } },
+            { district: { contains: arama } },
+          ],
+        },
+        orderBy: { createdAt: "desc" },
+        include: { category: true },
+      })
+    : [];
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
@@ -25,16 +41,30 @@ export default async function Home() {
         <section className="flex-1">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-lg font-bold text-gray-800">
-              Anasayfa Vitrini
+              {arama ? (
+                <>
+                  &quot;{arama}&quot; için{" "}
+                  <span className="text-sm font-normal text-gray-500">
+                    ({ilanlar.length} sonuç bulundu)
+                  </span>
+                </>
+              ) : (
+                "Arama yapmak için bir kelime yazın"
+              )}
             </h2>
-            <a href="#" className="text-sm text-blue-600 hover:underline">
-              Tüm vitrin ilanlarını göster
+            <a href="/" className="text-sm text-blue-600 hover:underline">
+              Tüm ilanlar
             </a>
           </div>
 
-          {ilanlar.length === 0 ? (
+          {arama && ilanlar.length === 0 ? (
             <div className="bg-white rounded-lg border border-gray-200 p-12 text-center">
-              <p className="text-gray-500">Henüz ilan bulunmuyor.</p>
+              <p className="text-gray-500">
+                &quot;{arama}&quot; için sonuç bulunamadı.
+              </p>
+              <p className="text-xs text-gray-400 mt-2">
+                Farklı bir kelime deneyin.
+              </p>
             </div>
           ) : (
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">

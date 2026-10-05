@@ -1,0 +1,74 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String     @id @default(cuid())
+  email     String     @unique
+  name      String
+  phone     String?
+  password  String
+  city      String?
+  listings  Listing[]
+  favorites Favorite[]
+  gonderilenMesajlar Message[] @relation("Gonderen")
+  alinanMesajlar     Message[] @relation("Alici")
+  createdAt DateTime   @default(now())
+}
+
+model Category {
+  id       String    @id @default(cuid())
+  name     String
+  slug     String    @unique
+  icon     String?
+  parentId String?
+  parent   Category? @relation("AltKategori", fields: [parentId], references: [id])
+  children Category[] @relation("AltKategori")
+  listings Listing[]
+}
+
+model Listing {
+  id          String     @id @default(cuid())
+  title       String
+  description String
+  price       Float
+  city        String
+  district    String?
+  images      String
+  status      String     @default("PENDING")
+  userId      String
+  user        User       @relation(fields: [userId], references: [id])
+  categoryId  String
+  category    Category   @relation(fields: [categoryId], references: [id])
+  views       Int        @default(0)
+  createdAt   DateTime   @default(now())
+  favorites   Favorite[]
+  mesajlar    Message[]
+}
+
+model Favorite {
+  id        String  @id @default(cuid())
+  userId    String
+  listingId String
+  user      User    @relation(fields: [userId], references: [id])
+  listing   Listing @relation(fields: [listingId], references: [id])
+  @@unique([userId, listingId])
+}
+
+model Message {
+  id         String   @id @default(cuid())
+  icerik     String
+  okundu     Boolean  @default(false)
+  gonderenId String
+  gonderen   User     @relation("Gonderen", fields: [gonderenId], references: [id])
+  aliciId    String
+  alici      User     @relation("Alici", fields: [aliciId], references: [id])
+  ilanId     String?
+  ilan       Listing? @relation(fields: [ilanId], references: [id])
+  createdAt  DateTime @default(now())
+}
