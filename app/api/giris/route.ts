@@ -45,7 +45,7 @@ export async function POST(request: Request) {
       );
     }
 
-    // ✅ Cookie'ye kullanıcı bilgisini kaydet (role dahil)
+    // Cookie'ye kullanıcı bilgisini kaydet (role dahil)
     const cookieStore = await cookies();
     cookieStore.set(
       "kullanici",
@@ -56,7 +56,7 @@ export async function POST(request: Request) {
         role: kullanici.role,
       }),
       {
-        maxAge: 60 * 60 * 24 * 7, // 7 gün
+        maxAge: 60 * 60 * 24 * 7,
         path: "/",
         httpOnly: false,
       }

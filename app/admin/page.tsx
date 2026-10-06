@@ -1,10 +1,11 @@
 // app/admin/page.tsx
-import { prisma } from "@/lib/prisma";
 import Link from "next/link";
+import { cookies } from "next/headers";
+import { prisma } from "@/lib/prisma";
 
 export const dynamic = "force-dynamic";
 
-export default async function AdminDashboard() {
+async function getIstatistikler() {
   const [
     toplamIlan,
     aktifIlan,
@@ -12,7 +13,6 @@ export default async function AdminDashboard() {
     toplamMesaj,
     toplamFavori,
     sonIlanlar,
-    sonKullanicilar,
   ] = await Promise.all([
     prisma.listing.count(),
     prisma.listing.count({ where: { status: "ACTIVE" } }),
@@ -22,125 +22,156 @@ export default async function AdminDashboard() {
     prisma.listing.findMany({
       orderBy: { createdAt: "desc" },
       take: 5,
-      include: { user: { select: { name: true } }, category: true },
-    }),
-    prisma.user.findMany({
-      orderBy: { createdAt: "desc" },
-      take: 5,
-      select: {
-        id: true,
-        name: true,
-        email: true,
-        city: true,
-        role: true,
-        createdAt: true,
+      include: {
+        user: { select: { name: true } },
+        category: true,
       },
     }),
   ]);
 
+  return {
+    toplamIlan,
+    aktifIlan,
+    toplamKullanici,
+    toplamMesaj,
+    toplamFavori,
+    sonIlanlar,
+  };
+}
+
+export default async function AdminDashboard() {
+  const ist = await getIstatistikler();
+
+  const kartlar = [
+    { baslik: "Toplam İlan", deger: ist.toplamIlan, renk: "bg-blue-500", ikon: "📋" },
+    { baslik: "Aktif İlan", deger: ist.aktifIlan, renk: "bg-green-500", ikon: "✅" },
+    { baslik: "Kullanıcı", deger: ist.toplamKullanici, renk: "bg-purple-500", ikon: "👥" },
+    { baslik: "Mesaj", deger: ist.toplamMesaj, renk: "bg-orange-500", ikon: "✉️" },
+    { baslik: "Favori", deger: ist.toplamFavori, renk: "bg-red-500", ikon: "❤️" },
+  ];
+
   return (
     <div className="space-y-6">
       {/* İstatistik Kartları */}
-      <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
-          <p className="text-xs text-gray-500 mb-1">Toplam İlan</p>
-          <p className="text-2xl font-bold text-gray-900">{toplamIlan}</p>
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
+        {kartlar.map((k) => (
+          <div
+            key={k.baslik}
+            className="bg-white rounded-lg border border-gray-200 p-4"
+          >
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-2xl">{k.ikon}</span>
+              <span
+                className={`${k.renk} text-white text-[10px] font-bold px-2 py-0.5 rounded`}
+              >
+                TOPLAM
+              </span>
+            </div>
+            <p className="text-2xl font-bold text-gray-900">{k.deger}</p>
+            <p className="text-xs text-gray-500 mt-1">{k.baslik}</p>
+          </div>
+        ))}
+      </div>
+
+      {/* Son İlanlar */}
+      <div className="bg-white rounded-lg border border-gray-200">
+        <div className="flex items-center justify-between p-4 border-b border-gray-200">
+          <h2 className="text-lg font-bold text-gray-900">🕐 Son İlanlar</h2>
+          <Link
+            href="/admin/ilanlar"
+            className="text-sm text-blue-600 hover:underline"
+          >
+            Tümünü Gör →
+          </Link>
         </div>
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
-          <p className="text-xs text-gray-500 mb-1">Aktif İlan</p>
-          <p className="text-2xl font-bold text-green-600">{aktifIlan}</p>
-        </div>
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
-          <p className="text-xs text-gray-500 mb-1">Kullanıcı</p>
-          <p className="text-2xl font-bold text-blue-600">{toplamKullanici}</p>
-        </div>
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
-          <p className="text-xs text-gray-500 mb-1">Mesaj</p>
-          <p className="text-2xl font-bold text-purple-600">{toplamMesaj}</p>
-        </div>
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
-          <p className="text-xs text-gray-500 mb-1">Favori</p>
-          <p className="text-2xl font-bold text-red-600">{toplamFavori}</p>
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead className="bg-gray-50">
+              <tr>
+                <th className="text-left px-4 py-3 font-semibold text-gray-700">
+                  Başlık
+                </th>
+                <th className="text-left px-4 py-3 font-semibold text-gray-700 hidden md:table-cell">
+                  Kategori
+                </th>
+                <th className="text-left px-4 py-3 font-semibold text-gray-700 hidden md:table-cell">
+                  Sahip
+                </th>
+                <th className="text-left px-4 py-3 font-semibold text-gray-700">
+                  Fiyat
+                </th>
+                <th className="text-left px-4 py-3 font-semibold text-gray-700 hidden md:table-cell">
+                  Tarih
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {ist.sonIlanlar.map((ilan) => (
+                <tr
+                  key={ilan.id}
+                  className="border-b border-gray-100 last:border-0 hover:bg-gray-50"
+                >
+                  <td className="px-4 py-3">
+                    <Link
+                      href={`/ilan/${ilan.id}`}
+                      className="font-medium text-gray-800 hover:text-yellow-600"
+                    >
+                      {ilan.title}
+                    </Link>
+                  </td>
+                  <td className="px-4 py-3 hidden md:table-cell text-gray-600">
+                    {ilan.category.name}
+                  </td>
+                  <td className="px-4 py-3 hidden md:table-cell text-gray-600">
+                    {ilan.user.name}
+                  </td>
+                  <td className="px-4 py-3 font-semibold text-gray-900">
+                    {ilan.price > 0
+                      ? `${ilan.price.toLocaleString("tr-TR")} TL`
+                      : "Fiyat Yok"}
+                  </td>
+                  <td className="px-4 py-3 hidden md:table-cell text-gray-500 text-xs">
+                    {new Date(ilan.createdAt).toLocaleDateString("tr-TR")}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </div>
 
-      {/* Son İlanlar ve Son Kullanıcılar */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Son İlanlar */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-          <div className="border-b border-gray-200 px-4 py-3 flex justify-between items-center">
-            <h2 className="font-bold text-gray-800">Son İlanlar</h2>
-            <Link
-              href="/admin/ilanlar"
-              className="text-xs text-blue-600 hover:underline"
-            >
-              Tümünü Gör →
-            </Link>
-          </div>
-          <div className="divide-y divide-gray-100">
-            {sonIlanlar.map((ilan) => (
-              <div key={ilan.id} className="px-4 py-3 flex items-center gap-3">
-                <div className="flex-1 min-w-0">
-                  <Link
-                    href={`/ilan/${ilan.id}`}
-                    className="text-sm font-medium text-gray-800 hover:text-yellow-600 line-clamp-1"
-                  >
-                    {ilan.title}
-                  </Link>
-                  <p className="text-xs text-gray-500 mt-0.5">
-                    {ilan.user.name} · {ilan.category.name} · {ilan.city}
-                  </p>
-                </div>
-                <div className="text-right flex-shrink-0">
-                  <p className="text-xs font-semibold text-gray-800">
-                    {ilan.price > 0
-                      ? `${ilan.price.toLocaleString("tr-TR")} ₺`
-                      : "Fiyat Yok"}
-                  </p>
-                  <p className="text-[10px] text-gray-400">
-                    {new Date(ilan.createdAt).toLocaleDateString("tr-TR")}
-                  </p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Son Kullanıcılar */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-          <div className="border-b border-gray-200 px-4 py-3 flex justify-between items-center">
-            <h2 className="font-bold text-gray-800">Son Kullanıcılar</h2>
-            <Link
-              href="/admin/kullanicilar"
-              className="text-xs text-blue-600 hover:underline"
-            >
-              Tümünü Gör →
-            </Link>
-          </div>
-          <div className="divide-y divide-gray-100">
-            {sonKullanicilar.map((k) => (
-              <div key={k.id} className="px-4 py-3 flex items-center gap-3">
-                <div className="w-8 h-8 bg-yellow-500 text-white rounded-full flex items-center justify-center font-bold text-xs flex-shrink-0">
-                  {k.name.charAt(0).toUpperCase()}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-gray-800 truncate">
-                    {k.name}
-                    {k.role === "ADMIN" && (
-                      <span className="ml-2 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded">
-                        ADMIN
-                      </span>
-                    )}
-                  </p>
-                  <p className="text-xs text-gray-500 truncate">{k.email}</p>
-                </div>
-                <p className="text-[10px] text-gray-400 flex-shrink-0">
-                  {new Date(k.createdAt).toLocaleDateString("tr-TR")}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
+      {/* Hızlı Linkler */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+        <Link
+          href="/admin/ilanlar"
+          className="bg-white rounded-lg border border-gray-200 p-4 hover:shadow-md transition"
+        >
+          <p className="text-2xl mb-2">📋</p>
+          <p className="font-bold text-gray-900">İlanları Yönet</p>
+          <p className="text-xs text-gray-500 mt-1">
+            Onayla, reddet, sil
+          </p>
+        </Link>
+        <Link
+          href="/admin/kullanicilar"
+          className="bg-white rounded-lg border border-gray-200 p-4 hover:shadow-md transition"
+        >
+          <p className="text-2xl mb-2">👥</p>
+          <p className="font-bold text-gray-900">Kullanıcılar</p>
+          <p className="text-xs text-gray-500 mt-1">
+            Kullanıcı listesini görüntüle
+          </p>
+        </Link>
+        <Link
+          href="/"
+          className="bg-white rounded-lg border border-gray-200 p-4 hover:shadow-md transition"
+        >
+          <p className="text-2xl mb-2">🏠</p>
+          <p className="font-bold text-gray-900">Siteye Dön</p>
+          <p className="text-xs text-gray-500 mt-1">
+            Ana sayfaya geri dön
+          </p>
+        </Link>
       </div>
     </div>
   );
