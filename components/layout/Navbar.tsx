@@ -9,6 +9,7 @@ type Kullanici = {
   id: string;
   name: string;
   email: string;
+  role?: string;
 };
 
 export default function Navbar() {
@@ -126,9 +127,18 @@ export default function Navbar() {
                     >
                       👤 Profilim
                     </Link>
+                    {kullanici.role === "ADMIN" && (
+                      <Link
+                        href="/admin"
+                        onClick={() => setMenuAcik(false)}
+                        className="block px-4 py-2 text-sm text-red-600 hover:bg-red-50 font-medium border-t border-gray-100"
+                      >
+                        🔧 Admin Paneli
+                      </Link>
+                    )}
                     <button
                       onClick={cikisYap}
-                      className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 border-t border-gray-100 mt-1"
+                      className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 border-t border-gray-100"
                     >
                       🚪 Çıkış Yap
                     </button>
