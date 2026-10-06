@@ -10,17 +10,18 @@ datasource db {
 }
 
 model User {
-  id                 String     @id @default(cuid())
-  email              String     @unique
-  name               String
-  phone              String?
-  password           String
-  city               String?
-  listings           Listing[]
-  favorites          Favorite[]
-  gonderilenMesajlar Message[]  @relation("Gonderen")
-  alinanMesajlar     Message[]  @relation("Alici")
-  createdAt          DateTime   @default(now())
+  id        String     @id @default(cuid())
+  email     String     @unique
+  name      String
+  phone     String?
+  password  String
+  city      String?
+  role      String     @default("USER")
+  listings  Listing[]
+  favorites Favorite[]
+  gonderilenMesajlar Message[] @relation("Gonderen")
+  alinanMesajlar     Message[] @relation("Alici")
+  createdAt DateTime   @default(now())
 }
 
 model Category {
