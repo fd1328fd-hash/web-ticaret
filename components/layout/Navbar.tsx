@@ -91,11 +91,6 @@ export default function Navbar() {
                       <p className="text-xs text-gray-500 truncate">
                         {kullanici.email}
                       </p>
-                      {kullanici.role === "ADMIN" && (
-                        <span className="inline-block mt-1 bg-purple-100 text-purple-800 text-[10px] font-bold px-2 py-0.5 rounded">
-                          ADMIN
-                        </span>
-                      )}
                     </div>
                     <Link
                       href="/ilan/ver"
@@ -136,7 +131,7 @@ export default function Navbar() {
                       <Link
                         href="/admin"
                         onClick={() => setMenuAcik(false)}
-                        className="block px-4 py-2 text-sm font-semibold text-purple-700 bg-purple-50 hover:bg-purple-100 border-t border-purple-100 mt-1"
+                        className="block px-4 py-2 text-sm text-red-600 hover:bg-red-50 font-medium"
                       >
                         🔧 Admin Paneli
                       </Link>
