@@ -5,8 +5,8 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "sahibinden.com - Türkiye'nin İlan Platformu",
-  description: "Sahibinden satılık, kiralık, ikinci el, otomobil, emlak ilanları.",
+  title: "bazar.com - Türkiye'nin İlan Platformu",
+  description: "Satılık, kiralık, ikinci el, otomobil, emlak ilanları.",
 };
 
 export default function RootLayout({

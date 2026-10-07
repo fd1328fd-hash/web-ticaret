@@ -44,7 +44,7 @@ export default function Footer() {
           </div>
         </div>
         <div className="border-t border-gray-300 mt-6 pt-4 text-center text-xs text-gray-500">
-          © 2026 sahibinden.com benzeri demo. Tüm hakları saklıdır.
+          © 2026 bazar.com — Tüm hakları saklıdır.
         </div>
       </div>
     </footer>

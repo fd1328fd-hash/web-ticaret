@@ -52,7 +52,7 @@ export default function Navbar() {
     <header className="bg-white shadow-sm sticky top-0 z-50 border-b border-gray-200">
       <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between gap-4">
         <Link href="/" className="flex-shrink-0">
-          <span className="text-2xl font-bold text-yellow-500">sahibinden</span>
+          <span className="text-2xl font-bold text-yellow-500">bazar</span>
           <span className="text-2xl font-bold text-gray-800">.com</span>
         </Link>
 
