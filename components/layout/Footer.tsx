@@ -20,7 +20,7 @@ export default function Footer() {
             <ul className="space-y-2 text-gray-600">
               <li><Link href="#" className="hover:text-yellow-600">Sıkça Sorulan Sorular</Link></li>
               <li><Link href="#" className="hover:text-yellow-600">Güvenli Alışveriş</Link></li>
-              <li><Link href="#" className="hover:text-yellow-600">İlan Ver</Link></li>
+              <li><Link href="/ilan/ver" className="hover:text-yellow-600">İlan Ver</Link></li>
               <li><Link href="#" className="hover:text-yellow-600">Şikayet</Link></li>
             </ul>
           </div>
@@ -29,17 +29,17 @@ export default function Footer() {
             <ul className="space-y-2 text-gray-600">
               <li><Link href="/kategori/emlak" className="hover:text-yellow-600">Emlak</Link></li>
               <li><Link href="/kategori/vasita" className="hover:text-yellow-600">Vasıta</Link></li>
-              <li><Link href="#" className="hover:text-yellow-600">İkinci El</Link></li>
-              <li><Link href="#" className="hover:text-yellow-600">İş Makineleri</Link></li>
+              <li><Link href="/kategori/ev-yasam" className="hover:text-yellow-600">Ev & Yaşam</Link></li>
+              <li><Link href="/kategori/is-makineleri" className="hover:text-yellow-600">İş Makineleri</Link></li>
             </ul>
           </div>
           <div>
             <h3 className="font-bold text-gray-800 mb-3">Güvenlik</h3>
             <ul className="space-y-2 text-gray-600">
-              <li><Link href="#" className="hover:text-yellow-600">KVKK</Link></li>
-              <li><Link href="#" className="hover:text-yellow-600">Gizlilik Politikası</Link></li>
-              <li><Link href="#" className="hover:text-yellow-600">Çerez Politikası</Link></li>
-              <li><Link href="#" className="hover:text-yellow-600">Kullanım Şartları</Link></li>
+              <li><Link href="/sozlesmeler/kvkk" className="hover:text-yellow-600">KVKK Aydınlatma</Link></li>
+              <li><Link href="/sozlesmeler/gizlilik" className="hover:text-yellow-600">Gizlilik Politikası</Link></li>
+              <li><Link href="/sozlesmeler/cerez" className="hover:text-yellow-600">Çerez Politikası</Link></li>
+              <li><Link href="/sozlesmeler/kullanim" className="hover:text-yellow-600">Kullanım Şartları</Link></li>
             </ul>
           </div>
         </div>

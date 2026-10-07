@@ -12,10 +12,17 @@ export default function KayitSayfasi() {
   const [telefon, setTelefon] = useState("");
   const [sehir, setSehir] = useState("");
   const [sifre, setSifre] = useState("");
+  const [kvkkOnay, setKvkkOnay] = useState(false);
   const [mesaj, setMesaj] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!kvkkOnay) {
+      setMesaj("❌ Lütfen KVKK Aydınlatma Metni'ni ve Kullanım Koşulları'nı kabul edin.");
+      return;
+    }
+
     setMesaj("Kayıt yapılıyor...");
 
     const res = await fetch("/api/kayit", {
@@ -58,7 +65,7 @@ export default function KayitSayfasi() {
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Ad Soyad
+                Ad Soyad *
               </label>
               <input
                 type="text"
@@ -72,7 +79,7 @@ export default function KayitSayfasi() {
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                E-posta
+                E-posta *
               </label>
               <input
                 type="email"
@@ -112,7 +119,7 @@ export default function KayitSayfasi() {
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Şifre
+                Şifre *
               </label>
               <input
                 type="password"
@@ -125,6 +132,43 @@ export default function KayitSayfasi() {
               />
             </div>
 
+            <div className="bg-gray-50 border border-gray-200 rounded-md p-3">
+              <label className="flex items-start gap-2 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={kvkkOnay}
+                  onChange={(e) => setKvkkOnay(e.target.checked)}
+                  className="mt-0.5 w-4 h-4 accent-yellow-500 cursor-pointer"
+                />
+                <span className="text-xs text-gray-600 leading-relaxed">
+                  <Link
+                    href="/sozlesmeler/kvkk"
+                    target="_blank"
+                    className="text-yellow-600 hover:underline font-medium"
+                  >
+                    KVKK Aydınlatma Metni
+                  </Link>
+                  &apos;ni,{" "}
+                  <Link
+                    href="/sozlesmeler/kullanim"
+                    target="_blank"
+                    className="text-yellow-600 hover:underline font-medium"
+                  >
+                    Kullanım Koşulları
+                  </Link>
+                  &apos;nı ve{" "}
+                  <Link
+                    href="/sozlesmeler/gizlilik"
+                    target="_blank"
+                    className="text-yellow-600 hover:underline font-medium"
+                  >
+                    Gizlilik Politikası
+                  </Link>
+                  &apos;nı okudum, kabul ediyorum. *
+                </span>
+              </label>
+            </div>
+
             {mesaj && (
               <div className="text-sm text-center text-gray-700 bg-gray-50 border border-gray-200 rounded-md p-2">
                 {mesaj}
@@ -133,7 +177,8 @@ export default function KayitSayfasi() {
 
             <button
               type="submit"
-              className="w-full bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2.5 rounded-md transition"
+              disabled={!kvkkOnay}
+              className="w-full bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2.5 rounded-md transition disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Kayıt Ol
             </button>
@@ -144,11 +189,6 @@ export default function KayitSayfasi() {
             <Link href="/giris" className="text-yellow-600 hover:underline font-medium">
               Giriş Yap
             </Link>
-          </div>
-
-          <div className="mt-4 p-3 bg-gray-50 border border-gray-200 rounded-md text-xs text-gray-600">
-            Kayıt olarak <strong>Kullanım Şartları</strong> ve{" "}
-            <strong>Gizlilik Politikası</strong>&apos;nı kabul etmiş olursunuz.
           </div>
         </div>
       </main>
