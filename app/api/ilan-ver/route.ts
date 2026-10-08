@@ -6,28 +6,12 @@ import { cookies } from "next/headers";
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const {
-      title,
-      description,
-      price,
-      city,
-      district,
-      categorySlug,
-      imageUrl,
-    } = body;
+    const { title, description, price, city, district, categorySlug, imageUrl } = body;
 
-    // Zorunlu alanlar (description artık zorunlu değil)
+    // Zorunlu alanlar (açıklama ve fotoğraf opsiyonel)
     if (!title || !city || !categorySlug) {
       return NextResponse.json(
         { hata: "Başlık, şehir ve kategori zorunludur." },
-        { status: 400 }
-      );
-    }
-
-    // Resim zorunlu
-    if (!imageUrl || !imageUrl.trim()) {
-      return NextResponse.json(
-        { hata: "Lütfen bir fotoğraf yükleyin." },
         { status: 400 }
       );
     }
@@ -54,7 +38,6 @@ export async function POST(request: Request) {
       );
     }
 
-    // Kategoriyi bul
     const kategori = await prisma.category.findUnique({
       where: { slug: categorySlug },
     });
@@ -66,7 +49,9 @@ export async function POST(request: Request) {
       );
     }
 
-    // İlanı oluştur
+    // Resim varsa array'e ekle, yoksa boş array
+    const imagesArray = imageUrl && imageUrl.trim() ? [imageUrl.trim()] : [];
+
     const ilan = await prisma.listing.create({
       data: {
         title,
@@ -74,7 +59,7 @@ export async function POST(request: Request) {
         price: Number(price) || 0,
         city,
         district: district || null,
-        images: JSON.stringify([imageUrl]),
+        images: JSON.stringify(imagesArray),
         status: "ACTIVE",
         userId: kullaniciId,
         categoryId: kategori.id,
@@ -82,16 +67,13 @@ export async function POST(request: Request) {
     });
 
     return NextResponse.json(
-      {
-        mesaj: "İlan başarıyla oluşturuldu!",
-        ilan: { id: ilan.id, title: ilan.title },
-      },
+      { mesaj: "İlan başarıyla oluşturuldu!", ilan: { id: ilan.id } },
       { status: 201 }
     );
   } catch (error) {
     console.error("İlan verme hatası:", error);
     return NextResponse.json(
-      { hata: "Sunucu hatası. Lütfen tekrar deneyin." },
+      { hata: "Sunucu hatası." },
       { status: 500 }
     );
   }

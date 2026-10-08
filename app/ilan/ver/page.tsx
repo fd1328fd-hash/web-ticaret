@@ -31,7 +31,6 @@ export default function IlanVerSayfasi() {
   const [resimYukleniyor, setResimYukleniyor] = useState(false);
   const [mesaj, setMesaj] = useState("");
 
-  // Seçili şehre göre ilçeler
   const ilceler = form.city ? illerIlceler[form.city] || [] : [];
 
   const handleChange = (
@@ -39,7 +38,6 @@ export default function IlanVerSayfasi() {
   ) => {
     const { name, value } = e.target;
 
-    // Şehir değişince ilçeyi sıfırla
     if (name === "city") {
       setForm({ ...form, city: value, district: "" });
     } else {
@@ -80,12 +78,6 @@ export default function IlanVerSayfasi() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    if (!resimUrl) {
-      setMesaj("❌ Lütfen bir fotoğraf yükleyin.");
-      return;
-    }
-
     setMesaj("İlan veriliyor...");
 
     const res = await fetch("/api/ilan-ver", {
@@ -216,10 +208,10 @@ export default function IlanVerSayfasi() {
               </select>
             </div>
 
-            {/* RESİM YÜKLEME */}
+            {/* RESİM YÜKLEME (opsiyonel) */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Fotoğraf *
+                Fotoğraf (opsiyonel)
               </label>
 
               {resimUrl ? (
