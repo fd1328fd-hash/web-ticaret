@@ -16,6 +16,7 @@ export async function POST(request: Request) {
       imageUrl,
     } = body;
 
+    // Zorunlu alanlar
     if (!title || !description || !city || !categorySlug) {
       return NextResponse.json(
         { hata: "Başlık, açıklama, şehir ve kategori zorunludur." },
@@ -23,14 +24,7 @@ export async function POST(request: Request) {
       );
     }
 
-    // ⚠️ RESİM ZORUNLU
-    if (!imageUrl || !imageUrl.trim()) {
-      return NextResponse.json(
-        { hata: "Lütfen bir fotoğraf yükleyin." },
-        { status: 400 }
-      );
-    }
-
+    // Cookie'den kullanıcıyı oku
     const cookieStore = await cookies();
     const kullaniciCookie = cookieStore.get("kullanici");
 
@@ -52,6 +46,7 @@ export async function POST(request: Request) {
       );
     }
 
+    // Kategoriyi bul
     const kategori = await prisma.category.findUnique({
       where: { slug: categorySlug },
     });
@@ -63,6 +58,12 @@ export async function POST(request: Request) {
       );
     }
 
+    // ✅ Fotoğraf varsa onu kullan, yoksa placeholder
+    const resim = imageUrl && imageUrl.trim()
+      ? imageUrl.trim()
+      : "https://via.placeholder.com/800x600?text=Foto%C4%9Fraf+Yok";
+
+    // İlanı oluştur
     const ilan = await prisma.listing.create({
       data: {
         title,
@@ -70,7 +71,7 @@ export async function POST(request: Request) {
         price: Number(price) || 0,
         city,
         district: district || null,
-        images: JSON.stringify([imageUrl]),
+        images: JSON.stringify([resim]),
         status: "ACTIVE",
         userId: kullaniciId,
         categoryId: kategori.id,
