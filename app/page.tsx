@@ -39,7 +39,8 @@ export default async function Home() {
           ) : (
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
               {ilanlar.map((ilan) => {
-                let resim = "https://picsum.photos/seed/1/400/300";
+                let resim =
+                  "https://via.placeholder.com/400x300/e5e7eb/6b7280?text=Fotoğraf+Yok";
                 try {
                   const parsed = JSON.parse(ilan.images);
                   if (Array.isArray(parsed) && parsed[0]) resim = parsed[0];
