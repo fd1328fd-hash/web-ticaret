@@ -16,11 +16,8 @@ export default function IlanKarti({
   fiyat,
   resim,
 }: IlanKartiProps) {
-  const resimVar =
-    resim &&
-    resim.trim() &&
-    !resim.includes("picsum.photos") &&
-    !resim.includes("placeholder");
+  // Sadece boş string ise resim yok say
+  const resimVar = resim && resim.trim();
 
   return (
     <Link
