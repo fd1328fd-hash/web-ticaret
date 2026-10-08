@@ -16,18 +16,28 @@ export default function IlanKarti({
   fiyat,
   resim,
 }: IlanKartiProps) {
+  const resimVar =
+    resim &&
+    resim.trim() &&
+    !resim.includes("picsum.photos") &&
+    !resim.includes("placeholder");
+
   return (
     <Link
       href={`/ilan/${id}`}
       className="bg-white rounded-lg overflow-hidden border border-gray-200 hover:shadow-md transition-shadow cursor-pointer group block"
     >
       <div className="w-full h-32 bg-gray-100 overflow-hidden">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={resim}
-          alt={baslik}
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-        />
+        {resimVar ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={resim}
+            alt={baslik}
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+          />
+        ) : (
+          <div className="w-full h-full bg-gray-100" />
+        )}
       </div>
       <div className="p-2">
         <h3 className="text-xs font-semibold text-gray-800 line-clamp-2 h-8 leading-tight">
