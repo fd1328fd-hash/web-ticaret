@@ -1,5 +1,8 @@
 // components/ilan/IlanKarti.tsx
+"use client";
+
 import Link from "next/link";
+import { useState } from "react";
 
 export type IlanKartiProps = {
   id: number | string;
@@ -16,8 +19,8 @@ export default function IlanKarti({
   fiyat,
   resim,
 }: IlanKartiProps) {
-  // Sadece boş string ise resim yok say
-  const resimVar = resim && resim.trim();
+  const [resimHata, setResimHata] = useState(false);
+  const resimVar = resim && resim.trim() && !resimHata;
 
   return (
     <Link
@@ -29,7 +32,8 @@ export default function IlanKarti({
           // eslint-disable-next-line @next/next/no-img-element
           <img
             src={resim}
-            alt={baslik}
+            alt=""
+            onError={() => setResimHata(true)}
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
           />
         ) : (
