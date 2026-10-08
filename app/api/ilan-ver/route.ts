@@ -6,9 +6,17 @@ import { cookies } from "next/headers";
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { title, description, price, city, district, categorySlug, imageUrl } = body;
+    const {
+      title,
+      description,
+      price,
+      city,
+      district,
+      categorySlug,
+      imageUrl,
+    } = body;
 
-    // Zorunlu alanlar (açıklama artık zorunlu değil)
+    // Zorunlu alanlar (description artık zorunlu değil)
     if (!title || !city || !categorySlug) {
       return NextResponse.json(
         { hata: "Başlık, şehir ve kategori zorunludur." },
@@ -24,6 +32,7 @@ export async function POST(request: Request) {
       );
     }
 
+    // Cookie'den kullanıcıyı oku
     const cookieStore = await cookies();
     const kullaniciCookie = cookieStore.get("kullanici");
 
@@ -45,6 +54,7 @@ export async function POST(request: Request) {
       );
     }
 
+    // Kategoriyi bul
     const kategori = await prisma.category.findUnique({
       where: { slug: categorySlug },
     });
@@ -56,6 +66,7 @@ export async function POST(request: Request) {
       );
     }
 
+    // İlanı oluştur
     const ilan = await prisma.listing.create({
       data: {
         title,
@@ -71,13 +82,16 @@ export async function POST(request: Request) {
     });
 
     return NextResponse.json(
-      { mesaj: "İlan başarıyla oluşturuldu!", ilan: { id: ilan.id } },
+      {
+        mesaj: "İlan başarıyla oluşturuldu!",
+        ilan: { id: ilan.id, title: ilan.title },
+      },
       { status: 201 }
     );
   } catch (error) {
     console.error("İlan verme hatası:", error);
     return NextResponse.json(
-      { hata: "Sunucu hatası." },
+      { hata: "Sunucu hatası. Lütfen tekrar deneyin." },
       { status: 500 }
     );
   }
