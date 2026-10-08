@@ -6,25 +6,24 @@ import { cookies } from "next/headers";
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const {
-      title,
-      description,
-      price,
-      city,
-      district,
-      categorySlug,
-      imageUrl,
-    } = body;
+    const { title, description, price, city, district, categorySlug, imageUrl } = body;
 
-    // Zorunlu alanlar
-    if (!title || !description || !city || !categorySlug) {
+    // Zorunlu alanlar (açıklama artık zorunlu değil)
+    if (!title || !city || !categorySlug) {
       return NextResponse.json(
-        { hata: "Başlık, açıklama, şehir ve kategori zorunludur." },
+        { hata: "Başlık, şehir ve kategori zorunludur." },
         { status: 400 }
       );
     }
 
-    // Cookie'den kullanıcıyı oku
+    // Resim zorunlu
+    if (!imageUrl || !imageUrl.trim()) {
+      return NextResponse.json(
+        { hata: "Lütfen bir fotoğraf yükleyin." },
+        { status: 400 }
+      );
+    }
+
     const cookieStore = await cookies();
     const kullaniciCookie = cookieStore.get("kullanici");
 
@@ -46,7 +45,6 @@ export async function POST(request: Request) {
       );
     }
 
-    // Kategoriyi bul
     const kategori = await prisma.category.findUnique({
       where: { slug: categorySlug },
     });
@@ -58,20 +56,14 @@ export async function POST(request: Request) {
       );
     }
 
-    // ✅ Fotoğraf varsa onu kullan, yoksa placeholder
-    const resim = imageUrl && imageUrl.trim()
-      ? imageUrl.trim()
-      : "https://via.placeholder.com/800x600?text=Foto%C4%9Fraf+Yok";
-
-    // İlanı oluştur
     const ilan = await prisma.listing.create({
       data: {
         title,
-        description,
+        description: description || "",
         price: Number(price) || 0,
         city,
         district: district || null,
-        images: JSON.stringify([resim]),
+        images: JSON.stringify([imageUrl]),
         status: "ACTIVE",
         userId: kullaniciId,
         categoryId: kategori.id,
@@ -79,16 +71,13 @@ export async function POST(request: Request) {
     });
 
     return NextResponse.json(
-      {
-        mesaj: "İlan başarıyla oluşturuldu!",
-        ilan: { id: ilan.id, title: ilan.title },
-      },
+      { mesaj: "İlan başarıyla oluşturuldu!", ilan: { id: ilan.id } },
       { status: 201 }
     );
   } catch (error) {
     console.error("İlan verme hatası:", error);
     return NextResponse.json(
-      { hata: "Sunucu hatası. Lütfen tekrar deneyin." },
+      { hata: "Sunucu hatası." },
       { status: 500 }
     );
   }
