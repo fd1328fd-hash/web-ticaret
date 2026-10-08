@@ -6,9 +6,16 @@ import { cookies } from "next/headers";
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { title, description, price, city, district, categorySlug, imageUrl } = body;
+    const {
+      title,
+      description,
+      price,
+      city,
+      district,
+      categorySlug,
+      imageUrl,
+    } = body;
 
-    // Zorunlu alanlar
     if (!title || !description || !city || !categorySlug) {
       return NextResponse.json(
         { hata: "Başlık, açıklama, şehir ve kategori zorunludur." },
@@ -16,7 +23,14 @@ export async function POST(request: Request) {
       );
     }
 
-    // Cookie'den kullanıcıyı oku
+    // ⚠️ RESİM ZORUNLU
+    if (!imageUrl || !imageUrl.trim()) {
+      return NextResponse.json(
+        { hata: "Lütfen bir fotoğraf yükleyin." },
+        { status: 400 }
+      );
+    }
+
     const cookieStore = await cookies();
     const kullaniciCookie = cookieStore.get("kullanici");
 
@@ -38,7 +52,6 @@ export async function POST(request: Request) {
       );
     }
 
-    // Kategoriyi bul
     const kategori = await prisma.category.findUnique({
       where: { slug: categorySlug },
     });
@@ -50,12 +63,6 @@ export async function POST(request: Request) {
       );
     }
 
-    // Resim URL'i hazırla
-    const resimUrl = imageUrl?.trim()
-      ? imageUrl.trim()
-      : `https://picsum.photos/seed/${Date.now()}/800/600`;
-
-    // İlanı oluştur
     const ilan = await prisma.listing.create({
       data: {
         title,
@@ -63,7 +70,7 @@ export async function POST(request: Request) {
         price: Number(price) || 0,
         city,
         district: district || null,
-        images: JSON.stringify([resimUrl]),
+        images: JSON.stringify([imageUrl]),
         status: "ACTIVE",
         userId: kullaniciId,
         categoryId: kategori.id,
