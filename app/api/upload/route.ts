@@ -1,9 +1,7 @@
 // app/api/upload/route.ts
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
-import { v2 as cloudinary } from "cloudinary";
-
-// cloudinary.config() YOK — CLOUDINARY_URL otomatik okunur
+import { put } from "@vercel/blob";
 
 export async function POST(request: Request) {
   try {
@@ -29,24 +27,14 @@ export async function POST(request: Request) {
       return NextResponse.json({ hata: "Maks 5 MB." }, { status: 400 });
     }
 
-    const bytes = await file.arrayBuffer();
-    const buffer = Buffer.from(bytes);
+    const blob = await put(`bazar-ilanlar/${Date.now()}-${file.name}`, file, {
+      access: "public",
+    });
 
-    const result = await new Promise<{ secure_url: string }>(
-      (resolve, reject) => {
-        cloudinary.uploader
-          .upload_stream(
-            { folder: "bazar-ilanlar", resource_type: "image" },
-            (error, result) => {
-              if (error) reject(error);
-              else resolve(result as { secure_url: string });
-            }
-          )
-          .end(buffer);
-      }
-    );
-
-    return NextResponse.json({ mesaj: "Resim yüklendi!", url: result.secure_url });
+    return NextResponse.json({
+      mesaj: "Resim yüklendi!",
+      url: blob.url,
+    });
   } catch (error) {
     console.error("Upload hatası:", error);
     return NextResponse.json({ hata: "Yükleme başarısız." }, { status: 500 });
