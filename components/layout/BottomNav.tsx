@@ -2,14 +2,14 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, LayoutGrid, PlusCircle, MessageSquare, User } from 'lucide-react';
+import { Home, Heart, PlusCircle, MessageSquare, User } from 'lucide-react';
 
 export default function BottomNav() {
   const pathname = usePathname();
 
   const menuItems = [
     { name: 'Anasayfa', path: '/', icon: Home },
-    { name: 'Kategoriler', path: '/kategori', icon: LayoutGrid },
+    { name: 'Favoriler', path: '/favoriler', icon: Heart },
     { name: 'İlan Ver', path: '/ilan-ver', icon: PlusCircle },
     { name: 'Mesajlar', path: '/mesajlar', icon: MessageSquare },
     { name: 'Hesabım', path: '/profil', icon: User },
