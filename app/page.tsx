@@ -20,7 +20,10 @@ export default async function Home() {
       <Navbar />
 
       <main className="max-w-7xl mx-auto px-4 py-6 flex flex-col md:flex-row gap-6 flex-1 w-full">
-        <Sidebar />
+        {/* Mobilde Sol Menüyü Gizle, Masaüstünde Göster */}
+        <div className="hidden md:block">
+          <Sidebar />
+        </div>
 
         <section className="flex-1">
           <div className="flex justify-between items-center mb-4">

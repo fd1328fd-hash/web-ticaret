@@ -16,6 +16,7 @@ export default function Navbar() {
   const [arama, setArama] = useState("");
   const [kullanici, setKullanici] = useState<Kullanici | null>(null);
   const [menuAcik, setMenuAcik] = useState(false);
+  const [mobilMenuAcik, setMobilMenuAcik] = useState(false); // YENİ: Mobil menü durumu
   const router = useRouter();
 
   useEffect(() => {
@@ -44,139 +45,122 @@ export default function Navbar() {
     document.cookie = "kullanici=; path=/; max-age=0";
     setKullanici(null);
     setMenuAcik(false);
+    setMobilMenuAcik(false); // Mobil menüyü de kapat
     router.push("/");
     router.refresh();
   };
 
   return (
     <header className="bg-white shadow-sm sticky top-0 z-50 border-b border-gray-200">
-      <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between gap-4">
+      <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between gap-2 md:gap-4">
+        
+        {/* Logo */}
         <Link href="/" className="flex-shrink-0">
-          <span className="text-2xl font-bold text-yellow-500">bazar</span>
-          <span className="text-2xl font-bold text-gray-800">.com</span>
+          <span className="text-xl md:text-2xl font-bold text-yellow-500">bazar</span>
+          <span className="text-xl md:text-2xl font-bold text-gray-800">.com</span>
         </Link>
 
-        <form onSubmit={handleSubmit} className="flex-1 max-w-2xl">
+        {/* Arama Çubuğu */}
+        <form onSubmit={handleSubmit} className="flex-1 max-w-2xl mx-2">
           <input
             type="text"
             value={arama}
             onChange={(e) => setArama(e.target.value)}
             placeholder="Kelime, ilan no veya ilan sahibi no ile arama"
-            className="w-full border border-gray-300 rounded-md px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+            className="w-full border border-gray-300 rounded-md px-3 py-1.5 md:px-4 md:py-2 text-xs md:text-sm focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
           />
         </form>
 
-        <div className="flex items-center gap-3 text-sm">
-          {kullanici ? (
-            <>
-              <div className="relative">
-                <button
-                  onClick={() => setMenuAcik(!menuAcik)}
-                  className="flex items-center gap-2 text-gray-700 hover:text-yellow-600 font-medium px-2 py-2 rounded-md hover:bg-gray-50"
-                >
-                  <div className="w-8 h-8 bg-yellow-500 text-white rounded-full flex items-center justify-center font-bold text-sm">
-                    {kullanici.name.charAt(0).toUpperCase()}
-                  </div>
-                  <span className="hidden md:inline">
-                    {kullanici.name.split(" ")[0]}
-                  </span>
-                </button>
-
-                {menuAcik && (
-                  <div className="absolute right-0 mt-2 w-56 bg-white border border-gray-200 rounded-lg shadow-lg py-2 z-50">
-                    <div className="px-4 py-2 border-b border-gray-100">
-                      <p className="font-bold text-gray-800 text-sm">
-                        {kullanici.name}
-                      </p>
-                      <p className="text-xs text-gray-500 truncate">
-                        {kullanici.email}
-                      </p>
+        {/* Sağ Taraf: Masaüstü Kullanıcı İşlemleri ve Mobil Menü Butonu */}
+        <div className="flex items-center gap-2 text-sm">
+          
+          {/* Masaüstü Kullanıcı Menüsü (Mobilde gizli) */}
+          <div className="hidden md:flex items-center gap-3">
+            {kullanici ? (
+              <>
+                <div className="relative">
+                  <button
+                    onClick={() => setMenuAcik(!menuAcik)}
+                    className="flex items-center gap-2 text-gray-700 hover:text-yellow-600 font-medium px-2 py-2 rounded-md hover:bg-gray-50"
+                  >
+                    <div className="w-8 h-8 bg-yellow-500 text-white rounded-full flex items-center justify-center font-bold text-sm">
+                      {kullanici.name.charAt(0).toUpperCase()}
                     </div>
-                    <Link
-                      href="/ilan/ver"
-                      onClick={() => setMenuAcik(false)}
-                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
-                    >
-                      ➕ İlan Ver
-                    </Link>
-                    <Link
-                      href="/mesajlar"
-                      onClick={() => setMenuAcik(false)}
-                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
-                    >
-                      ✉️ Mesajlarım
-                    </Link>
-                    <Link
-                      href="/ilanlarim"
-                      onClick={() => setMenuAcik(false)}
-                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
-                    >
-                      📋 İlanlarım
-                    </Link>
-                    <Link
-                      href="/favoriler"
-                      onClick={() => setMenuAcik(false)}
-                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
-                    >
-                      ♡ Favorilerim
-                    </Link>
-                    <Link
-                      href="/profil"
-                      onClick={() => setMenuAcik(false)}
-                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
-                    >
-                      👤 Profilim
-                    </Link>
-                    {kullanici.role === "ADMIN" && (
-                      <Link
-                        href="/admin"
-                        onClick={() => setMenuAcik(false)}
-                        className="block px-4 py-2 text-sm text-red-600 hover:bg-red-50 font-medium"
-                      >
-                        🔧 Admin Paneli
-                      </Link>
-                    )}
-                    <button
-                      onClick={cikisYap}
-                      className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 border-t border-gray-100 mt-1"
-                    >
-                      🚪 Çıkış Yap
-                    </button>
-                  </div>
-                )}
-              </div>
+                    <span>{kullanici.name.split(" ")[0]}</span>
+                  </button>
 
-              <Link
-                href="/ilan/ver"
-                className="bg-yellow-500 hover:bg-yellow-600 text-white font-semibold px-4 py-2 rounded-md transition"
-              >
-                Ücretsiz İlan Ver
-              </Link>
-            </>
-          ) : (
-            <>
-              <Link
-                href="/giris"
-                className="text-gray-700 hover:text-yellow-600 font-medium px-2 py-2"
-              >
-                Giriş Yap
-              </Link>
-              <Link
-                href="/kayit"
-                className="text-gray-700 hover:text-yellow-600 font-medium px-2 py-2"
-              >
-                Kayıt Ol
-              </Link>
-              <Link
-                href="/ilan/ver"
-                className="bg-yellow-500 hover:bg-yellow-600 text-white font-semibold px-4 py-2 rounded-md transition"
-              >
-                Ücretsiz İlan Ver
-              </Link>
-            </>
-          )}
+                  {menuAcik && (
+                    <div className="absolute right-0 mt-2 w-56 bg-white border border-gray-200 rounded-lg shadow-lg py-2 z-50">
+                      <div className="px-4 py-2 border-b border-gray-100">
+                        <p className="font-bold text-gray-800 text-sm">{kullanici.name}</p>
+                        <p className="text-xs text-gray-500 truncate">{kullanici.email}</p>
+                      </div>
+                      <Link href="/ilan/ver" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">➕ İlan Ver</Link>
+                      <Link href="/mesajlar" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">✉️ Mesajlarım</Link>
+                      <Link href="/ilanlarim" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">📋 İlanlarım</Link>
+                      <Link href="/favoriler" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">♡ Favorilerim</Link>
+                      <Link href="/profil" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">👤 Profilim</Link>
+                      {kullanici.role === "ADMIN" && (
+                        <Link href="/admin" className="block px-4 py-2 text-sm text-red-600 hover:bg-red-50 font-medium">🔧 Admin Paneli</Link>
+                      )}
+                      <button onClick={cikisYap} className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 border-t border-gray-100 mt-1">🚪 Çıkış Yap</button>
+                    </div>
+                  )}
+                </div>
+                <Link href="/ilan/ver" className="bg-yellow-500 hover:bg-yellow-600 text-white font-semibold px-4 py-2 rounded-md transition whitespace-nowrap">
+                  Ücretsiz İlan Ver
+                </Link>
+              </>
+            ) : (
+              <>
+                <Link href="/giris" className="text-gray-700 hover:text-yellow-600 font-medium px-2 py-2">Giriş Yap</Link>
+                <Link href="/kayit" className="text-gray-700 hover:text-yellow-600 font-medium px-2 py-2">Kayıt Ol</Link>
+                <Link href="/ilan/ver" className="bg-yellow-500 hover:bg-yellow-600 text-white font-semibold px-4 py-2 rounded-md transition whitespace-nowrap">
+                  Ücretsiz İlan Ver
+                </Link>
+              </>
+            )}
+          </div>
+
+          {/* Mobil Hamburger Menü Butonu (Sadece mobilde görünür) */}
+          <button 
+            className="md:hidden p-2 text-gray-700 font-bold text-xl"
+            onClick={() => setMobilMenuAcik(!mobilMenuAcik)}
+          >
+            {mobilMenuAcik ? "✕" : "☰"}
+          </button>
         </div>
       </div>
+
+      {/* Mobil Açılır Menü Paneli (Sadece mobilde görünür) */}
+      {mobilMenuAcik && (
+        <div className="md:hidden bg-white border-t border-gray-200 px-4 py-3 space-y-3 shadow-lg">
+          <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">Kategoriler</p>
+          <div className="grid grid-cols-2 gap-2">
+            <Link href="/kategori/emlak" className="block text-sm font-medium text-gray-700 p-2 bg-gray-50 rounded-md">🏠 Emlak</Link>
+            <Link href="/kategori/vasita" className="block text-sm font-medium text-gray-700 p-2 bg-gray-50 rounded-md">🚗 Vasıta</Link>
+            <Link href="/kategori/oto360" className="block text-sm font-medium text-gray-700 p-2 bg-gray-50 rounded-md">🔧 Oto360</Link>
+            <Link href="/kategori/acil" className="block text-sm font-medium text-gray-700 p-2 bg-gray-50 rounded-md">🚨 Acil Acil</Link>
+          </div>
+          
+          <div className="border-t border-gray-100 pt-3">
+            {kullanici ? (
+              <div className="space-y-1">
+                <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Hesabım</p>
+                <Link href="/ilan/ver" onClick={() => setMobilMenuAcik(false)} className="block text-sm text-gray-700 py-1">➕ İlan Ver</Link>
+                <Link href="/mesajlar" onClick={() => setMobilMenuAcik(false)} className="block text-sm text-gray-700 py-1">✉️ Mesajlarım</Link>
+                <Link href="/profil" onClick={() => setMobilMenuAcik(false)} className="block text-sm text-gray-700 py-1">👤 Profilim</Link>
+                <button onClick={cikisYap} className="block text-sm text-red-600 py-1 font-medium">🚪 Çıkış Yap</button>
+              </div>
+            ) : (
+              <div className="flex flex-col gap-2">
+                <Link href="/giris" onClick={() => setMobilMenuAcik(false)} className="block text-center text-sm font-medium text-yellow-600 border border-yellow-500 py-2 rounded-md">Giriş Yap</Link>
+                <Link href="/kayit" onClick={() => setMobilMenuAcik(false)} className="block text-center text-sm font-medium text-white bg-yellow-500 py-2 rounded-md">Kayıt Ol</Link>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </header>
   );
 }
