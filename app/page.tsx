@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { Search, Menu } from 'lucide-react';
 
 export default function Home() {
+  // Sadece üstteki yatay kayan butonlarda görünecek
   const hizliLinkler = [
     { name: 'Acil Acil', href: '/kategori/acil', icon: '🚨' },
     { name: 'Son 48 Saat', href: '/kategori/son48', icon: '⏳' },
@@ -9,6 +10,7 @@ export default function Home() {
     { name: 'Emlak360', href: '/kategori/emlak360', icon: '🏠' },
   ];
 
+  // Ana kategori listesi (Acil Acil buradan kaldırıldı)
   const kategoriler = [
     { name: 'Emlak', desc: 'Konut, İş Yeri, Arsa, Konut Projeleri...', href: '/kategori/emlak', icon: '🏠', color: 'bg-yellow-100 text-yellow-600' },
     { name: 'Vasıta', desc: 'Otomobil, Arazi, SUV & Pickup, Elektrikli...', href: '/kategori/vasita', icon: '🚗', color: 'bg-red-100 text-red-600' },
@@ -20,16 +22,16 @@ export default function Home() {
   ];
 
   return (
-    <div className="pb-20"> 
+    <div className="pb-20">
       {/* Üst Arama Çubuğu (Mobil için) */}
       <div className="md:hidden bg-white sticky top-0 z-40 p-3 border-b border-gray-200">
         <div className="flex items-center gap-3">
           <Menu className="text-gray-600" size={24} />
           <div className="flex-1 relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
-            <input 
-              type="text" 
-              placeholder="Kelime veya ilan numarası ile ara" 
+            <input
+              type="text"
+              placeholder="Kelime veya ilan numarası ile ara"
               className="w-full bg-gray-100 rounded-full py-2 pl-10 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-400"
             />
           </div>
@@ -49,8 +51,8 @@ export default function Home() {
       {/* Kategori Listesi */}
       <div className="bg-white mt-2 md:mt-0">
         {kategoriler.map((kat) => (
-          <Link 
-            key={kat.name} 
+          <Link
+            key={kat.name}
             href={kat.href}
             className="flex items-center p-4 border-b border-gray-50 hover:bg-gray-50 transition-colors"
           >
@@ -74,7 +76,7 @@ export default function Home() {
           <h2 className="text-lg font-bold text-gray-800">Anasayfa Vitrini</h2>
           <Link href="/vitrin" className="text-sm text-blue-600 font-medium">Tüm vitrin ilanlarını göster</Link>
         </div>
-        
+
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           <div className="bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden">
              <div className="h-32 bg-gray-200 flex items-center justify-center text-gray-400 text-sm">Fotoğraf Yok</div>
@@ -95,50 +97,6 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Altbilgi (Footer) */}
-      <footer className="bg-white border-t border-gray-200 mt-10 pb-24 md:pb-8">
-        <div className="max-w-7xl mx-auto py-8 px-4 grid grid-cols-2 md:grid-cols-4 gap-8 text-sm">
-          <div>
-            <h4 className="font-bold text-gray-800 mb-3">Kurumsal</h4>
-            <ul className="space-y-2 text-gray-500">
-              <li><a href="#" className="hover:text-yellow-500">Hakkımızda</a></li>
-              <li><a href="#" className="hover:text-yellow-500">Kariyer</a></li>
-              <li><a href="#" className="hover:text-yellow-500">İletişim</a></li>
-              <li><a href="#" className="hover:text-yellow-500">Basın</a></li>
-            </ul>
-          </div>
-          <div>
-            <h4 className="font-bold text-gray-800 mb-3">Yardım</h4>
-            <ul className="space-y-2 text-gray-500">
-              <li><a href="#" className="hover:text-yellow-500">Sıkça Sorulan Sorular</a></li>
-              <li><a href="#" className="hover:text-yellow-500">Güvenli Alışveriş</a></li>
-              <li><a href="#" className="hover:text-yellow-500">İlan Ver</a></li>
-              <li><a href="#" className="hover:text-yellow-500">Şikayet</a></li>
-            </ul>
-          </div>
-          <div>
-            <h4 className="font-bold text-gray-800 mb-3">Kategoriler</h4>
-            <ul className="space-y-2 text-gray-500">
-              <li><a href="/kategori/emlak" className="hover:text-yellow-500">Emlak</a></li>
-              <li><a href="/kategori/vasita" className="hover:text-yellow-500">Vasıta</a></li>
-              <li><a href="#" className="hover:text-yellow-500">Ev & Yaşam</a></li>
-              <li><a href="#" className="hover:text-yellow-500">İş Makineleri</a></li>
-            </ul>
-          </div>
-          <div>
-            <h4 className="font-bold text-gray-800 mb-3">Güvenlik</h4>
-            <ul className="space-y-2 text-gray-500">
-              <li><a href="#" className="hover:text-yellow-500">KVKK Aydınlatma</a></li>
-              <li><a href="#" className="hover:text-yellow-500">Gizlilik Politikası</a></li>
-              <li><a href="#" className="hover:text-yellow-500">Çerez Politikası</a></li>
-              <li><a href="#" className="hover:text-yellow-500">Kullanım Şartları</a></li>
-            </ul>
-          </div>
-        </div>
-        <div className="bg-gray-50 py-4 text-center text-xs text-gray-400 border-t border-gray-100">
-          © 2024 Bazar.com - Tüm hakları saklıdır.
-        </div>
-      </footer>
     </div>
   );
 }
