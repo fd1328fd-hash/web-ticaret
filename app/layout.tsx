@@ -1,3 +1,28 @@
+import type { Metadata } from "next";
+import { Inter } from "next/font/google";
+import "./globals.css";
+import BottomNav from "@/components/layout/BottomNav";
+
+const inter = Inter({ subsets: ["latin"] });
+
+export const metadata: Metadata = {
+  title: "Bazar.com - Türkiye'nin İlan Platformu",
+  description: "Satılık, Kiralık, İkinci el, otomobil, emlak ilanları...",
+};
+
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
+  return (
+    <html lang="tr">
+      <body className={inter.className}>
+        {/* Sayfa İçeriği */}
+        <main className="min-h-screen">
+          {children}
+        </main>
+
         {/* Altbilgi (Footer) - Tüm sayfalarda görünür */}
         <footer className="bg-white border-t border-gray-200 mt-10 pb-24 md:pb-8">
           <div className="max-w-7xl mx-auto py-8 px-4 grid grid-cols-2 md:grid-cols-4 gap-8 text-sm">
@@ -42,3 +67,10 @@
             © 2024 Bazar.com - Tüm hakları saklıdır.
           </div>
         </footer>
+
+        {/* Mobil Alt Navigasyon */}
+        <BottomNav />
+      </body>
+    </html>
+  );
+}
